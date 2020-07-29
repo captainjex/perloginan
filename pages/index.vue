@@ -30,12 +30,22 @@
           </v-img>
         </v-hover>
         <v-card-actions :class="$style.cardActions">
-          <v-avatar color="white" size="140" :class="$style.avatar">
-            <img
-              src="https://cdn.vuetifyjs.com/images/john.jpg"
-              alt="John"
-            >
-          </v-avatar>
+          <v-hover v-slot:default="{ hover }">
+            <v-avatar color="white" size="140" :class="$style.avatar">
+              <img
+                src="https://cdn.vuetifyjs.com/images/john.jpg"
+                alt="John"
+              >
+              <v-overlay
+                absolute
+                :value="hover"
+              >
+                <v-btn text>
+                  edit
+                </v-btn>
+              </v-overlay>
+            </v-avatar>
+          </v-hover>
         </v-card-actions>
         <app-error-alert :errors="errors" />
         <v-card-title>
@@ -44,7 +54,7 @@
           </div>
           <v-spacer />
 
-          <v-btn color="primary" class="mr-4">
+          <v-btn color="primary" class="mr-4" @click="onOpenEditProfile">
             edit profil
           </v-btn>
           <v-btn
@@ -57,19 +67,81 @@
           </v-btn>
         </v-card-title>
 
-        <v-card-subtitle>
+        <v-card-subtitle v-if="user.bio">
           {{ user.bio }}
         </v-card-subtitle>
+        <v-card-text>
+          <p v-if="user.gender">
+            {{ user.gender }}
+          </p>
+          <p v-if="user.birthday">
+            {{ user.birthday }}
+          </p>
+          <p v-if="user.hometown">
+            {{ user.hometown }}
+          </p>
+        </v-card-text>
         <v-card-text>
           <p>{{ user }}</p>
         </v-card-text>
       </v-card>
     </v-flex>
+
+    <v-dialog
+      v-model="dialogEditProfileOpened"
+      persistent
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Edit Profil
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field
+            v-model="profile.name"
+            label="Nama"
+            outlined
+          />
+          <v-text-field
+            v-model="profile.bio"
+            label="Bio"
+            outlined
+          />
+          <v-text-field
+            v-model="profile.hometown"
+            label="Lokasi"
+            outlined
+          />
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+
+          <v-btn
+            color="primary"
+            @click="onSaveEditProfile"
+          >
+            simpan
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
 <script>
 import { handleApi } from '../lib/core/api'
+
+function initProfileForm () {
+  return {
+    name: '',
+    gender: '',
+    birthday: '',
+    hometown: '',
+    bio: ''
+  }
+}
 
 export default {
   components: {
@@ -79,7 +151,9 @@ export default {
     return {
       isLoadingLogout: false,
       isLoading: false,
-      errors: null
+      errors: null,
+      dialogEditProfileOpened: false,
+      profile: initProfileForm()
     }
   },
 
@@ -116,6 +190,13 @@ export default {
 
       this.$auth.setUser({ ...this.user, cover_picture: response.data.user_picture.cover_picture })
       this.isLoading = false
+    },
+    onOpenEditProfile () {
+      this.dialogEditProfileOpened = true
+    },
+    onSaveEditProfile () {
+      this.profile = initProfileForm()
+      this.dialogEditProfileOpened = false
     }
   }
 }
