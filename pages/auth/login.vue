@@ -11,7 +11,7 @@
     >
       <v-card class="pa-8">
         <v-card-title class="text-subtitle-1 justify-center text-center">
-          Masukkan nomor dan password <br> yang sudah terdaftar
+          Gunakan nomor HP dan password <br> yang sudah terdaftar
         </v-card-title>
         <v-card-text>
           <v-col cols="12">
