@@ -1,15 +1,11 @@
-import { SET_LATLONG, SET_USER } from '~/constants/storeTypes'
+import { SET_LATLONG } from '~/constants/storeTypes'
 
 export const state = () => ({
-  latlong: '',
-  user: null
+  latlong: ''
 })
 
 export const mutations = {
   [SET_LATLONG] (state, latlong) {
     state.latlong = latlong
-  },
-  [SET_USER] (state, user) {
-    state.user = user
   }
 }
