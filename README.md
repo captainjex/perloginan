@@ -5,7 +5,7 @@ Simple app login and register using otp.
 live sample: [https://perloginan.now.sh](https://perloginan.now.sh)
 
 ## Build Setup
-This project using nuxtjs spa mode
+This project is using nuxtjs spa mode
 
 ```bash
 # install dependencies
