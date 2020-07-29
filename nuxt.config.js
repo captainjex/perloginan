@@ -39,6 +39,9 @@ export default {
   plugins: [
     '~/plugins/location.client'
   ],
+  router: {
+    middleware: ['auth']
+  },
   /*
   ** Auto import components
   ** See https://nuxtjs.org/api/configuration-components
@@ -56,11 +59,28 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    ['@nuxtjs/axios', {
+      baseURL: 'https://jesperorb-node-api-proxy.glitch.me/api/v1'
+    }],
+    ['@nuxtjs/auth', {
+      resetOnError: true,
+      redirect: {
+        login: '/auth/login',
+        logout: '/auth/login'
+      },
+      strategies: {
+        local: {
+          endpoints: {
+            login: { url: '/oauth/sign_in', method: 'post', propertyName: 'data.user.access_token' },
+            user: { url: '/profile/me', method: 'get', propertyName: 'data.user' },
+            logout: { url: '/oauth/revoke', method: 'post' }
+          },
+          tokenRequired: true,
+          tokenType: ''
+        }
+      }
+    }]
   ],
-  /*
-  ** vuetify module configuration
-  ** https://github.com/nuxt-community/vuetify-module
-  */
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {

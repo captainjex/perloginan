@@ -9,7 +9,7 @@
       sm8
       md6
     >
-      <v-card>
+      <v-card class="pa-8">
         <v-card-title class="text-subtitle-1 justify-center text-center">
           Masukkan nomor dan password <br> yang sudah terdaftar
         </v-card-title>
@@ -32,7 +32,18 @@
             />
           </v-col>
         </v-card-text>
-        <v-card-actions class="justify-center">
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            text
+            small
+            class="px-5"
+            nuxt
+            to="/auth/register"
+          >
+            Belum punya akun
+          </v-btn>
+          <v-spacer />
           <v-btn
             color="primary"
             :loading="isLoadingLogin"
@@ -48,10 +59,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { AUTH_TOKEN, AUTH_TOKEN_TYPE } from '~/constants/storageKeys'
-import { SET_USER } from '~/constants/storeTypes'
-
 export default {
   data () {
     return {
@@ -66,24 +73,16 @@ export default {
     async login () {
       try {
         this.isLoadingLogin = true
-        const response = await axios.post('http://pretest-qa.dcidev.id/api/v1/oauth/sign_in', {
-          phone: this.phone,
-          password: this.password,
-          latlong: this.$store.state.latlong,
-          device_token: 'ngawur',
-          device_type: 2
-        })
-        const { user } = response.data.data
-        localStorage.setItem(AUTH_TOKEN, user.access_token)
-        localStorage.setItem(AUTH_TOKEN_TYPE, user.token_type)
-
-        const responseCredential = await axios.get('http://pretest-qa.dcidev.id/api/v1/oauth/credentials', {
-          params: {
-            access_token: user.access_token
+        const response = await this.$auth.loginWith('local', {
+          data: {
+            phone: this.phone,
+            password: this.password,
+            latlong: this.$store.state.latlong,
+            device_token: 'ngawur',
+            device_type: 2
           }
         })
-        this.$store.commit(SET_USER, responseCredential.data.data.user)
-        this.$router.push('/')
+        console.log(response)
         this.isLoadingLogin = false
       } catch (error) {
         this.isLoadingLogin = false
