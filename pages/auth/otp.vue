@@ -15,17 +15,12 @@
         </v-card-title>
         <v-card-text>
           <app-error-alert :errors="errors" />
-          <v-col cols="12">
-            <v-text-field
-              v-model="otpCode"
-              label="OTP"
-              outlined
-            />
-          </v-col>
+          <app-otp-input ref="otpInput" :length="otpInputLength" @input="onOtpInput" />
           <v-col cols="12" class="text-center">
             <v-btn
               color="primary"
               class="px-5"
+              :disabled="otpCode && otpCode.length < otpInputLength"
               :loading="isLoadingVerify"
               @click="verifyOtp"
             >
@@ -59,10 +54,14 @@ export default {
       otpCode: '',
       isLoadingVerify: false,
       isLoadingResend: false,
-      errors: null
+      errors: null,
+      otpInputLength: 4
     }
   },
   methods: {
+    onOtpInput (e) {
+      this.otpCode = e
+    },
     async verifyOtp () {
       const data = {
         user_id: this.$route.query.userId,
@@ -88,10 +87,12 @@ export default {
 
       this.errors = null
       this.isLoadingResend = true
+      this.$refs.otpInput.reset()
       const [, responseErrors] = await handleApi(this.$axios.$post('/register/otp/request', data))
       if (responseErrors) {
         this.errors = responseErrors
       }
+      this.$refs.otpInput.focus()
       this.isLoadingResend = false
     }
   }
