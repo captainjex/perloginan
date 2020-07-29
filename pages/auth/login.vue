@@ -14,6 +14,7 @@
           Gunakan nomor HP dan password <br> yang sudah terdaftar
         </v-card-title>
         <v-card-text>
+          <app-error-alert :errors="errors" />
           <v-col cols="12">
             <v-text-field
               v-model="phone"
@@ -59,35 +60,35 @@
 </template>
 
 <script>
+import { handleApi } from '../../lib/core/api'
 export default {
   data () {
     return {
       showPassword: false,
       isLoadingLogin: false,
       phone: '',
-      password: ''
+      password: '',
+      errors: null
     }
   },
 
   methods: {
     async login () {
-      try {
-        this.isLoadingLogin = true
-        const response = await this.$auth.loginWith('local', {
-          data: {
-            phone: this.phone,
-            password: this.password,
-            latlong: this.$store.state.latlong,
-            device_token: 'ngawur',
-            device_type: 2
-          }
-        })
-        console.log(response)
-        this.isLoadingLogin = false
-      } catch (error) {
-        this.isLoadingLogin = false
-        console.log('error', error)
+      this.errors = null
+      this.isLoadingLogin = true
+      const [, responseErrors] = await handleApi(this.$auth.loginWith('local', {
+        data: {
+          phone: this.phone,
+          password: this.password,
+          latlong: this.$store.state.latlong,
+          device_token: 'ngawur',
+          device_type: 2
+        }
+      }))
+      if (responseErrors) {
+        this.errors = responseErrors
       }
+      this.isLoadingLogin = false
     }
   }
 }
