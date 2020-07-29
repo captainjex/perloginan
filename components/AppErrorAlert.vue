@@ -1,5 +1,5 @@
 <template>
-  <v-col v-if="errors" cols="12">
+  <div v-if="errors">
     <v-alert
       v-for="(err, key) in errors"
       :key="key"
@@ -8,7 +8,7 @@
     >
       {{ err }}
     </v-alert>
-  </v-col>
+  </div>
 </template>
 
 <script>
